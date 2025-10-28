@@ -1,7 +1,7 @@
-# MPU6050_tockn
-Arduino library for easy communicating with the MPU6050
+# MPU6050_Add
+Arduino library for easy communicating with the MPU6050. This has been updated to allow setting of the device address along with other minor optimizations.
 ## Usage
-You can see [example sketch.](https://github.com/Tockn/MPU6050_tockn/tree/master/examples)  
+You can see [example sketch.]()  
   
 If you want to get data of MPU6050, you must execute `update()` method before get method.  
 `update()` will get all data of MPU6050, and calculating angle by accelerometer, gyroscope and complementary filter.  
@@ -75,6 +75,11 @@ void setup(){
 ```
 ## Licence
 MIT
+
 ## Author
 
+Contributing author:
+[ShVerni](https://github.com/ShVerni)
+
+Original author:
 [tockn](https://github.com/tockn)
