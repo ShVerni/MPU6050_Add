@@ -2,7 +2,7 @@
  * This file and associated .cpp file are licensed under the MIT License Copyright (c) 2025 Sam Groveman
  *
  * Portions have been adapted from the below libraries and are copyright their respective owners:
- * https://github.com/adafruit/Adafruit_MPU6050_add/ (BSD License)
+ * https://github.com/adafruit/Adafruit_MPU6050/ (BSD License)
  * https://github.com/tockn/MPU6050_tockn/ (MIT License)
  *
  */
