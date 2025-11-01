@@ -25,13 +25,19 @@ MPU6050Add::MPU6050Add(float aC, float gC, int address, TwoWire* i2c_bus) {
 /// @brief Starts an MP6050
 /// @return True on success
 bool MPU6050Add::begin() {
-	if (!wire->begin()) {
-		return false;
-	}
 	// Make sure we're talking to the right chip
 	if (readMPU6050(MPU6050_WHO_AM_I) != 0x68) {
 		return false;
 	}
+	// Set defaults
+	setSampleRateDivisor(0x00);
+	setFilterBandwidth(MPU6050_BAND_260_HZ);
+ 	setGyroRange(MPU6050_RANGE_500_DEG);
+	setAccelerometerRange(MPU6050_RANGE_2_G);
+	// setClock(MPU6050_PLL_GYROX);
+	// enableSleep(false);
+	// setTemperatureStandby(false);
+	writeMPU6050(MPU6050_PWR_MGMT_1, 0x01); // This replaces the above with one transaction
 	return true;
 }
 
@@ -278,15 +284,32 @@ void MPU6050Add::calcGyroOffsets(uint16_t delayBefore, uint16_t delayAfter, bool
 		wire->beginTransmission(_address);
 		wire->write(MPU6050_GYRO_OUT);
 		wire->endTransmission(false);
-		wire->requestFrom((int)_address, 6);
+		wire->requestFrom(_address, 6);
 
 		rx = wire->read() << 8 | wire->read();
 		ry = wire->read() << 8 | wire->read();
 		rz = wire->read() << 8 | wire->read();
 
-		x += ((float)rx) / 65.5;
-		y += ((float)ry) / 65.5;
-		z += ((float)rz) / 65.5;
+		gyro_range gyro_range = getGyroRange();
+		float gyro_scale = 1;
+		switch (gyro_range) {
+			case MPU6050_RANGE_250_DEG:
+				gyro_scale = 131;
+				break;
+			case MPU6050_RANGE_500_DEG:
+				gyro_scale = 65.5;
+				break;
+			case MPU6050_RANGE_1000_DEG:
+				gyro_scale = 32.8;
+				break;
+			case MPU6050_RANGE_2000_DEG:
+				gyro_scale = 16.4;
+				break;
+		};
+
+		x += ((float)rx) / gyro_scale;
+		y += ((float)ry) / gyro_scale;
+		z += ((float)rz) / gyro_scale;
 	}
 	gyroXoffset = x / 3000;
 	gyroYoffset = y / 3000;
@@ -298,13 +321,13 @@ void MPU6050Add::calcGyroOffsets(uint16_t delayBefore, uint16_t delayAfter, bool
 		Serial.print("X : ");Serial.println(gyroXoffset);
 		Serial.print("Y : ");Serial.println(gyroYoffset);
 		Serial.print("Z : ");Serial.println(gyroZoffset);
-		Serial.print("========================================");
+		Serial.println("========================================");
 		delay(delayAfter);
 	}
 }
 
 /// @brief Updates all sensor readings
-void MPU6050Add::update(){
+void MPU6050Add::update() {
 	wire->beginTransmission(_address);
 	wire->write(MPU6050_ACCEL_OUT);
 	wire->endTransmission(false);
@@ -319,12 +342,11 @@ void MPU6050Add::update(){
 	rawGyroZ = wire->read() << 8 | wire->read();
 
 	float interval = (millis() - preInterval) * 0.001;
+	preInterval = millis();
 
 	temp = (rawTemp / 340.0) + 36.53;
 
 	accel_range accel_range = getAccelerometerRange();
-	preInterval = millis();
-
 	float accel_scale = 1;
 	switch (accel_range) {
 		case MPU6050_RANGE_16_G:
@@ -350,9 +372,8 @@ void MPU6050Add::update(){
 	angleAccY = atan2(accX, sqrt(accZ * accZ + accY * accY)) * 360 / -2.0 / PI;
 
 	gyro_range gyro_range = getGyroRange();
-
 	float gyro_scale = 1;
-	switch (accel_range) {
+	switch (gyro_range) {
 		case MPU6050_RANGE_250_DEG:
 			gyro_scale = 131;
 			break;
@@ -403,7 +424,7 @@ uint8_t MPU6050Add::readBits(Registers reg, uint8_t mask) {
 /// @brief Writes a byte to a register
 /// @param reg The register address
 /// @param data The data to write
-void MPU6050Add::writeMPU6050(Registers reg, uint8_t data){
+void MPU6050Add::writeMPU6050(Registers reg, uint8_t data) {
 	wire->beginTransmission(_address);
 	wire->write(reg);
 	wire->write(data);
