@@ -1,8 +1,7 @@
 
-#include <MPU6050_tockn.h>
-#include <Wire.h>
+#include <MPU6050_add.h>
 
-MPU6050 mpu6050(Wire);
+MPU6050Add mpu6050;
 
 void setup() {
   Serial.begin(9600);

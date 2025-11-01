@@ -1,29 +1,35 @@
 # MPU6050_Add
-Arduino library for easy communicating with the MPU6050. This has been updated to allow setting of the device address along with other minor optimizations.
+Arduino library for easy communicating with the MPU6050.
+
+While the [Adafruit library](https://github.com/adafruit/Adafruit_MPU6050/) is excellent, especially if using more than one of their sensors, it has a fair bit of overhead. The library by [tockn](https://github.com/tockn) is much lighter weight, by lacks many features and is not very flexible. This library aims to combine the best of both of these libraries. This is a stand alone library with the access to all of the MPU6050 features as provided by the Adafruit library.
+
+> [!CAUTION]
+> This library is very much in progress, not all of the registers and settings for the MPU6050 have been tested.
+
 ## Usage
-You can see [example sketch.]()  
+You can see an [example sketch](examples/GetAllData/GetAllData.ino).  
   
-If you want to get data of MPU6050, you must execute `update()` method before get method.  
-`update()` will get all data of MPU6050, and calculating angle by accelerometer, gyroscope and complementary filter.  
+If you want to get data of MPU6050, you must execute `update()` method before get method. `update()` will get all data of MPU6050, and calculate angle by accelerometer, gyroscope and complementary filter.  
 
 ### Complementary filter
-`update()` method calculate angle by accelerometer and gyroscope using complementary filter.  
-Those two coefficients determined by constructor.  
-Default coefficient of accelerometer is 0.02, gyroscope is 0.98.  
-`filtered_angle = (0.02 * accel) + (0.98 * gyro)`  
-#### example
-If you want to set 0.1 to accelerometer coefficient and 0.9 to gyroscope coefficient, your code is  
-```MPU6050 mpu6050(Wire, 0.1, 0.9);```  
+`update()` method calculate angle by accelerometer and gyroscope using complementary filter. Those two coefficients determined by constructor. Default coefficient of accelerometer is 0.02, gyroscope is 0.98.
 
+`filtered_angle = (0.02 * accel) + (0.98 * gyro)`  
+
+#### Example
+If you want to set 0.1 to accelerometer coefficient and 0.9 to gyroscope coefficient, your code is:
+
+`MPU6050 mpu6050(0.1, 0.9);` 
 
 ### Auto calibration
-If you use `calcGyroOffsets()` in `setup()`, it will calculate calibration of the gyroscope, and the value of the gyroscope will calibrated.  
-⚠DO NOT MOVE MPU6050 during calculating.⚠  
-```
-#include <MPU6050_tockn>
-#include <Wire.h>
+If you use `calcGyroOffsets()` it will calculate calibration of the gyroscope, and the value of the gyroscope will calibrated.  
+> [!WARNING]
+> DO NOT MOVE MPU6050 during calculating
 
-MPU6050 mpu6050(Wire);
+```cpp
+#include <MPU6050Add.h>
+
+MPU6050 mpu6050;
 
 void setup(){
   Wire.begin();
@@ -33,12 +39,12 @@ void setup(){
 
 ```
 
-If you use `calcGyroOffsets(true)` in `setup()`, you can see state of calculating calibration in serial monitor.  
-```
-#include <MPU6050_tockn>
-#include <Wire.h>
+If you use `calcGyroOffsets(true)`, you can see the state of the calibration in the serial monitor.  
 
-MPU6050 mpu6050(Wire);
+```cpp
+#include <MPU6050Add.h>
+
+MPU6050 mpu6050;
 
 void setup(){
   Serial.begin(9600);
@@ -55,16 +61,14 @@ Done!
 X : 1.45
 Y : 1.23
 Z : -1.32
-Program will start after 3 seconds
 ```  
   
-If you know offsets of gyroscope, you can set them by `setGyroOffsets()`, and you don't have to execute `calcGyroOffsets()`, so you can launch program quickly.
-#### example
-```
-#include <MPU6050_tockn>
-#include <Wire.h>
+If you know the offsets for the gyroscope, you can set them by `setGyroOffsets()`, and you don't have to execute `calcGyroOffsets()`, so you can launch the program more quickly.
+#### Example
+```cpp
+#include <MPU6050Add>
 
-MPU6050 mpu6050(Wire);
+MPU6050 mpu6050;
 
 void setup(){
   Serial.begin(9600);
@@ -73,13 +77,12 @@ void setup(){
   mpu6050.setGyroOffsets(1.45, 1.23, -1.32);
 }
 ```
-## Licence
-MIT
 
 ## Author
 
 Contributing author:
 [ShVerni](https://github.com/ShVerni)
 
-Original author:
+Original authors:
 [tockn](https://github.com/tockn)
+[adafruit](https://github.com/adafruit/)

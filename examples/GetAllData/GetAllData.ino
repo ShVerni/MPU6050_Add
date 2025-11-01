@@ -1,8 +1,6 @@
+#include <MPU6050_add.h>
 
-#include <MPU6050_tockn.h>
-#include <Wire.h>
-
-MPU6050 mpu6050(Wire);
+MPU6050Add mpu6050;
 
 long timer = 0;
 
@@ -10,7 +8,8 @@ void setup() {
   Serial.begin(9600);
   Wire.begin();
   mpu6050.begin();
-  mpu6050.calcGyroOffsets(true);
+  mpu6050.calcGyroOffsets(1000, 1000, true);
+  mpu6050.resetAngles();
 }
 
 void loop() {
@@ -19,7 +18,7 @@ void loop() {
   if(millis() - timer > 1000){
     
     Serial.println("=======================================================");
-    Serial.print("temp : ");Serial.println(mpu6050.getTemp());
+    Serial.print("temp : ");Serial.println(mpu6050.getTemperature());
     Serial.print("accX : ");Serial.print(mpu6050.getAccX());
     Serial.print("\taccY : ");Serial.print(mpu6050.getAccY());
     Serial.print("\taccZ : ");Serial.println(mpu6050.getAccZ());
