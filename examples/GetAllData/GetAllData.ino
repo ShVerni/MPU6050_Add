@@ -9,7 +9,7 @@ long timer = 0;
 void setup() {
 	Serial.begin(115200);
 	delay(2000);
-	Wire.begin(SCL, SDA);
+	Wire.begin();
 	if (!mpu6050.begin()) {
 		Serial.println("Could not start MPU");
 		while(1);
