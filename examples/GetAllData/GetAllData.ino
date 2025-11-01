@@ -1,4 +1,4 @@
-#include <MPU6050_add.h>
+#include <MPU6050Add.h>
 
 MPU6050Add mpu6050;
 

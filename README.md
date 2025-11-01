@@ -24,7 +24,7 @@ If you want to set 0.1 to accelerometer coefficient and 0.9 to gyroscope coeffic
 ### Auto calibration
 If you use `calcGyroOffsets()` it will calculate calibration of the gyroscope, and the value of the gyroscope will calibrated.  
 > [!WARNING]
-> DO NOT MOVE MPU6050 during calculating
+> DO NOT MOVE MPU6050 during calculations!
 
 ```cpp
 #include <MPU6050Add.h>

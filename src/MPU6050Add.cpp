@@ -1,4 +1,4 @@
-#include "MPU6050_add.h"
+#include "MPU6050Add.h"
 
 /// @brief Creates an MPU6050 device
 /// @param address The I2C address to use
